@@ -31,3 +31,13 @@ ei
 
 
 # Se encuentra
+mu <- 4
+sol <- solve(B-(mu*diag(2)),-0.5*b)
+sol
+
+r <- sqrt(t(sol)%*%sol)
+r
+
+# La respuesta optima
+y <- 72.15-(1.01*sol[1, 1])-(8.6*sol[2, 1])+(1.4*sol[1, 1]^2)-(8.76*sol[2, 1]^2)-(7.20*sol[1, 1]*sol[2, 1])
+y
