@@ -29,9 +29,9 @@ ys
 ei <- eigen(B)
 ei
 
-
+"""
 # Se encuentra
-mu <- 4
+mu <- 3.5
 sol <- solve(B-(mu*diag(2)),-0.5*b)
 sol
 
@@ -39,5 +39,56 @@ r <- sqrt(t(sol)%*%sol)
 r
 
 # La respuesta optima
-y <- 72.15-(1.01*sol[1, 1])-(8.6*sol[2, 1])+(1.4*sol[1, 1]^2)-(8.76*sol[2, 1]^2)-(7.20*sol[1, 1]*sol[2, 1])
+y <- 72.15-(1.01*sol[1, 1])-(8.61*sol[2, 1])+(1.4*sol[1, 1]^2)-(8.76*sol[2, 1]^2)-(7.20*sol[1, 1]*sol[2, 1])
 y
+
+# Codigo para multiples Mu's
+ridge <- function(B, b, Mu){
+  sol <- solve(B-(mu*diag(2)),-0.5*b)
+  return(sol)  
+}
+
+# sapply es mas eficiente que el ciclo for
+xr <- sapply(seq(2.6, 100, 0.1), function(mu) ridge(B, b, mu))
+xr
+
+r=0
+for(i in 1:ncol(xr)){
+  r[i]=as.vector(sqrt(t(as.matrix(xr[,i]))%*%as.matrix(xr[,i])))
+}
+r
+
+#Encontrando la respuesta óptima
+y0=0
+for(i in 1:ncol(xr)){
+  y0[i]=72.15-(1.01*xr[1,i])-(8.61*xr[2,i])+(1.4*xr[1,i]^2)-(8.76*xr[2,i]^2)-(7.20*xr[1,i]*xr[2,i])
+}
+y0
+"""
+ridge=function(B,b,mu){
+  sol=solve(B-(mu*diag(2)),-0.5*b)
+  return(sol)
+}
+
+xr=sapply(seq(-20, -15, 0.01),function(mu) ridge(B,b,mu))
+xr
+
+#Encontrando el radio de optimización
+r=0
+for(i in 1:ncol(xr)){
+  r[i]=as.vector(sqrt(t(as.matrix(xr[,i]))%*%as.matrix(xr[,i])))
+}
+r
+
+#Encontrando la respuesta óptima
+y0=0
+for(i in 1:ncol(xr)){
+  y0[i]=72.15-(1.01*xr[1,i])-(8.61*xr[2,i])+(1.4*xr[1,i]^2)-(8.76*xr[2,i]^2)-(7.20*xr[1,i]*xr[2,i])
+}
+y0
+
+# Graficar los radios
+plot(r, y0, type = "l")
+# abline(v <- 1.4142)
+# m <- seq(-15,-12,0.01)
+# plot(m, y0,type="l")

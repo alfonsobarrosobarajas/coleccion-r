@@ -1,5 +1,9 @@
 # Analisis Canonico
 b <- matrix(c(-1.104, 0.087, 1.02),nrow=3,ncol=1)
+
+
+
+
 B <- matrix(c(-0.76, -0.175, -0.25, -0.175, -1.042, 0.075, -0.25, 0.075, -1.149), nrow=3, ncol=3)
 bo <- 10.165
 # Funcion para encontrar punto estacionario
@@ -28,3 +32,6 @@ n3
 # determinar el tipo de punto estacionario
 ei <- eigen(B)
 ei
+
+
+# Se encuentra

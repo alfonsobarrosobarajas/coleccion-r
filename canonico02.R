@@ -1,0 +1,121 @@
+# Análisis Canónico
+# Pasos
+# 1.- Punto Estacionario y la respuesta de predicción
+# Vector
+b <- matrix(c(-48.8, 16.68, 40.8, 8.2), nrow <- 4, ncol <- 1)
+
+# Impresión de vector 'b'
+b
+
+# Matriz
+B <- matrix(c(0.524, 0.0268, 0.1525, -0.058, 0.0268, 0.01633, 0.0137, -0.03605, 0.1525, 0.0137, 0.681, 0.1075, -0.058, -0.03605, 0.1075, 0.0012), nrow <-4 ,ncol <- 4)
+
+# Impresión de la Matriz 'B'
+B
+
+# Funcíón para encontrar el punto estacionario
+pe <- function(B, b){
+  -0.5*(solve(B)%*%b)
+}
+
+# Cálculo e impresión del punto estacionario
+xs <- pe(B, b)
+xs
+
+
+# La respuesta de predicción en el punto estacionario
+rpe <- function(b0, xs, b){
+  b0 + (0.5 * (t(xs)%*%b))
+}
+
+b0 <- 660
+ys <- rpe(b0,xs,b)
+ys
+
+# Encontrando los niveles naturales del punto estacionario
+n1 <- (xs[1, 1]*30)+255
+n2 <- (xs[2, 1]*9)+55
+n3 <- (xs[3, 1]*0.6)+1.1
+n4 <- (xs[4, 1])
+n1
+n2
+n3
+
+# 2.- Conocer el punto que se tiene
+
+# Determinar eigenvalores
+ei <- eigen(B)
+ei
+
+
+# Análisis Ridge
+mu <- 3.5
+sol <- solve(B-(mu*diag(4)), -0.5*b)
+sol
+
+# Radio de optimización
+r = sqrt(t(sol)%*%sol)
+r 
+
+# Asignación de variables
+G <- sol[1, 1]
+H <- sol[2, 1]
+I <- sol[3, 1]
+K <- sol[4, 1]
+
+
+# La respuesta óptima
+y <- 74.66 - (0.074 * sol[1, 1]) + (4.803 * sol[2, 1]) - (1.552 * sol[3, 1]) 
+    + (0.235 * sol[4, 1]) + (0.222 * sol[1, 1] ^ 2) + (0.408 * sol[2, 1] ^ 2) 
+    - (0.273 * sol[3, 1] ^ 2) + (0.0002 * sol[4, 1] ^ 2)
+    - (0.174 * sol[1, 1] * sol[2, 1]) + (0.126 * sol[1, 1] * sol[3, 1]) 
+    - (0.093 * sol[1, 1] * sol[4, 1]) + (0.087 * sol[2, 1] * sol[3, 1]) 
+    - (0.444 * sol[2, 1] * sol[4, 1]) + (0.168 * sol[3, 1] * sol[4, 1])
+
+# Impresión de y
+y
+
+
+# Código para múltiples Mu's
+ridge <- function(B, b, mu){
+  sol <- solve(B - mu*diag(4), -0.5*b)
+  return(sol)
+}
+
+
+xr <- sapply(seq(1, 10, 0.1), function(mu) ridge(B, b, mu))
+xr
+
+#Encontrando el radio de optimización
+r=0
+for(i in 1:ncol(xr)){
+  r[i]=as.vector(sqrt(t(as.matrix(xr[,i]))%*%as.matrix(xr[,i])))
+}
+r
+
+
+#Encontrando la respuesta óptima
+y0=0
+for(i in 1:ncol(xr)){
+  
+  G <- xr[1, i]
+  H <- xr[2, i]
+  I <- xr[3, i]
+  K <- xr[4, i]
+  
+  y0[i] <- 74.66 - (0.074 * G) + (4.803 * H) - (1.552 * I) 
+  + (0.235 * K) + (0.222 * G ^ 2) + (0.408 * H ^ 2) 
+  - (0.273 * I ^ 2) + (0.0002 * K ^ 2)
+  - (0.174 * G * H) + (0.126 * G * I) 
+  - (0.093 * G * K) + (0.087 * H * I) 
+  - (0.444 * H * K) + (0.168 * I * K)
+  
+}
+y0
+
+
+
+
+
+
+
