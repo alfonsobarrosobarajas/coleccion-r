@@ -28,7 +28,7 @@ rpe <- function(b0, xs, b){
   b0 + (0.5 * (t(xs)%*%b))
 }
 
-b0 <- 660
+b0 <- 74.66
 ys <- rpe(b0,xs,b)
 ys
 
@@ -83,7 +83,7 @@ ridge <- function(B, b, mu){
 }
 
 
-xr <- sapply(seq(1, 10, 0.1), function(mu) ridge(B, b, mu))
+xr <- sapply(seq(1, 13, 0.1), function(mu) ridge(B, b, mu))
 xr
 
 #Encontrando el radio de optimización
