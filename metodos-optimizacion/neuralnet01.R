@@ -40,3 +40,37 @@ nms <- names(train_nrm)
 
 
 frml <- as.formula(paste("medv ~", paste(nms[!nms %in% "medv"], collapse = " + ")))
+
+
+modelo.nn <- neuralnet(frml,
+                       data=train_nrm,
+                       hidden=c(7,5),
+                       threshold = 0.05,
+                       algorithm = "rprop+")
+
+
+# Predicción
+pr.nn <- compute(modelo.nn, within(test_nrm, rm(medv))) # medv es el target
+
+pr.nn
+
+
+# Se transforma el valor a escalar al valor nominal original
+medv.predict <- pr.nn$net.result*(max(datos$medv)-min(datos$medv))+min(datos$medv)
+medv.real <- (test_nrm$medv)*(max(datos$medv)-min(datos$medv))+min(datos$medv)
+
+
+# Suma de error cuadrático
+(se.nn <- sum(medv.real - medv.predict)^2)/nrow(test_nrm)
+
+#Gráficos
+qplot(x=medv.real, 
+      y=medv.predict, 
+      geom=c("point","smooth"), 
+      method="lm",
+      main=paste("Real vs Prediccion, Suma de Error Cuadrático= ",
+                  round(se.nn,2)
+                 )
+      )
+
+plot(modelo.nn)
