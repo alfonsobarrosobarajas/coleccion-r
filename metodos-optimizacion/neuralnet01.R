@@ -26,3 +26,17 @@ test <- datos[-muestra, ]
 
 # Normalización de datos
 maxs <- apply(train, 2, max)
+
+mins <- apply(train, 2, min)
+
+datos_nrm <- as.data.frame(scale(datos, center=mins,scale=maxs-mins))
+
+train_nrm <- datos_nrm[muestra, ]
+test_nrm <- datos_nrm[-muestra, ]
+
+
+
+nms <- names(train_nrm)
+
+
+frml <- as.formula(paste("medv ~", paste(nms[!nms %in% "medv"], collapse = " + ")))
